@@ -40,6 +40,11 @@ MODEL_PATH = os.getenv("MODEL_PATH", "yolov8n.pt")
 # Dry-Run: kein GPIO, nur stdout-Ausgabe
 DRY_RUN = os.getenv("DRY_RUN", "true").lower() == "true"
 
+# Ziel-Klassen Whitelist: leer = alles triggert, sonst z.B. "cat,dog,bird"
+_classes_raw = os.getenv("TARGET_CLASSES", "")
+TARGET_CLASSES = [c.strip().lower()
+                  for c in _classes_raw.split(",") if c.strip()]
+
 # --- Validierung ---
 if not CAMERA_IP or not CAMERA_PASSWORD:
     log.error("CAMERA_IP oder CAMERA_PASSWORD fehlt in der .env Datei")
@@ -138,7 +143,7 @@ def main():
             frame_count += 1
 
             # Nur jeden 3. Frame auswerten (CPU schonen)
-            if frame_count % 5 != 0:
+            if frame_count % 3 != 0:
                 continue
 
             results = model(frame, verbose=False)[0]
@@ -148,6 +153,10 @@ def main():
                 confidence = float(box.conf)
 
                 if confidence < CONFIDENCE:
+                    continue
+
+                if TARGET_CLASSES and label.lower() not in TARGET_CLASSES:
+                    log.debug(f"{label} ignoriert (nicht in TARGET_CLASSES)")
                     continue
 
                 now = time.time()
