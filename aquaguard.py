@@ -142,8 +142,12 @@ def main():
 
             frame_count += 1
 
-            # Nur jeden 3. Frame auswerten (CPU schonen)
-            if frame_count % 3 != 0:
+            # Buffer leeren: neuesten Frame holen, alte verwerfen
+            for _ in range(2):
+                cap.grab()
+
+            ret, frame = cap.retrieve()
+            if not ret:
                 continue
 
             results = model(frame, verbose=False)[0]
