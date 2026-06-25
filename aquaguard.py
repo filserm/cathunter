@@ -125,7 +125,7 @@ def main():
     log.info("Warte auf ersten Frame...")
 
     # Warten bis Stream bereit
-    for _ in range(30):
+    for _ in range(60):
         if stream.get_frame() is not None:
             break
         time.sleep(0.5)
