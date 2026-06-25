@@ -138,7 +138,7 @@ def main():
             frame_count += 1
 
             # Nur jeden 3. Frame auswerten (CPU schonen)
-            if frame_count % 3 != 0:
+            if frame_count % 5 != 0:
                 continue
 
             results = model(frame, verbose=False)[0]
