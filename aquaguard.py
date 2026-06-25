@@ -37,6 +37,9 @@ BURST_DURATION = float(os.getenv("BURST_DURATION", "0.8"))
 # YOLO-Modell
 MODEL_PATH = os.getenv("MODEL_PATH", "yolov8n.pt")
 
+# Dry-Run: kein GPIO, nur stdout-Ausgabe
+DRY_RUN = os.getenv("DRY_RUN", "true").lower() == "true"
+
 # --- Validierung ---
 if not CAMERA_IP or not CAMERA_PASSWORD:
     log.error("CAMERA_IP oder CAMERA_PASSWORD fehlt in der .env Datei")
@@ -70,6 +73,10 @@ except ImportError:
 def fire(label: str, confidence: float):
     log.info(f"🎯 TREFFER: {label} ({confidence:.0%}) → WASSER!")
 
+    if DRY_RUN:
+        print(f"SHOOT: {label} ({confidence:.0%})", flush=True)
+        return
+
     if not GPIO_AVAILABLE:
         log.info(
             f"[SIM] Würde GPIO Pin {GPIO_PIN} für {BURST_DURATION}s aktivieren")
@@ -97,6 +104,8 @@ def main():
     log.info("AquaGuard startet...")
     log.info(
         f"Modell: {MODEL_PATH} | Konfidenz: {CONFIDENCE} | Cooldown: {COOLDOWN}s | Burst: {BURST_DURATION}s")
+    if DRY_RUN:
+        log.info("🧪 DRY_RUN aktiv — kein GPIO, Ausgabe nur auf stdout")
 
     model = YOLO(MODEL_PATH)
     log.info(f"YOLO geladen · {len(model.names)} Klassen verfügbar")
