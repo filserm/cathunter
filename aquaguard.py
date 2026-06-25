@@ -126,7 +126,7 @@ def main():
 
     log.info("Stream aktiv · Erkennung läuft...")
 
-    last_trigger = 0
+    last_trigger = {}  # pro Klasse getrennt
     frame_count = 0
 
     try:
@@ -164,14 +164,15 @@ def main():
                     continue
 
                 now = time.time()
-                if now - last_trigger < COOLDOWN:
-                    remaining = COOLDOWN - (now - last_trigger)
+                last_for_label = last_trigger.get(label, 0)
+                if now - last_for_label < COOLDOWN:
+                    remaining = COOLDOWN - (now - last_for_label)
                     log.debug(
                         f"{label} erkannt aber Cooldown aktiv ({remaining:.1f}s)")
                     continue
 
                 fire(label, confidence)
-                last_trigger = now
+                last_trigger[label] = now
 
     except KeyboardInterrupt:
         log.info("Beendet durch Benutzer (Ctrl+C)")
