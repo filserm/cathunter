@@ -1,4 +1,14 @@
-opencv-python
+# CPU-only torch (kein NVIDIA/CUDA-Ballast)
+--extra-index-url https://download.pytorch.org/whl/cpu
+ 
+torch
+torchvision
+opencv-python-headless
 python-dotenv
+pillow
+pyyaml
+requests
+tqdm
+scipy
+psutil
 ultralytics
-RPi.GPIO
