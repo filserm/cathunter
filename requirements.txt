@@ -1,2 +1,4 @@
 opencv-python
 python-dotenv
+ultralytics
+RPi.GPIO
