@@ -131,7 +131,11 @@ def main():
 
     try:
         while True:
-            ret, frame = cap.read()
+            # Buffer leeren: 3 Frames verwerfen, dann aktuellen holen
+            for _ in range(3):
+                cap.grab()
+
+            ret, frame = cap.retrieve()
 
             if not ret:
                 log.warning("Kein Frame empfangen — reconnecting...")
@@ -141,14 +145,6 @@ def main():
                 continue
 
             frame_count += 1
-
-            # Buffer leeren: neuesten Frame holen, alte verwerfen
-            for _ in range(2):
-                cap.grab()
-
-            ret, frame = cap.retrieve()
-            if not ret:
-                continue
 
             results = model(frame, verbose=False)[0]
 
